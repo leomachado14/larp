@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detector & Analisador de Senhas Premium</title>
+    
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #0b0f19 0%, #111827 50%, #0d1322 100%);
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --card-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --input-bg: rgba(15, 23, 42, 0.6);
+            --input-border: rgba(255, 255, 255, 0.12);
+            
+            --primary: #6366f1;
+            --primary-glow: rgba(99, 102, 241, 0.35);
+            --primary-hover: #4f46e5;
+
+            --danger: #ef4444;
+            --danger-glow: rgba(239, 68, 68, 0.3);
+            --warning: #f59e0b;
+            --warning-glow: rgba(245, 158, 11, 0.3);
+            --info: #3b82f6;
+            --info-glow: rgba(59, 130, 246, 0.3);
+            --success: #10b981;
+            --success-glow: rgba(16, 185, 129, 0.3);
+        }
+
+        [data-theme="light"] {
+            --bg-gradient: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 50%, #f1f5f9 100%);
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --card-border: rgba(255, 255, 255, 0.6);
+            --card-shadow: 0 20px 40px rgba(99, 102, 241, 0.08), 0 1px 3px rgba(0,0,0,0.05);
+            
+            --text-main: #0f172a;
+            --text-sub: #64748b;
+            --input-bg: rgba(248, 250, 252, 0.9);
+            --input-border: rgba(203, 213, 225, 0.8);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+            transition: background 0.3s, color 0.3s, border-color 0.3s, box-shadow 0.3s;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 24px 16px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Efeitos de fundo (Glow Orbs) */
+        body::before, body::after {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: 0;
+            pointer-events: none;
+        }
+        body::before {
+            top: 10%;
+            left: 15%;
+            background: rgba(99, 102, 241, 0.15);
+        }
+        body::after {
+            bottom: 10%;
+            right: 15%;
+            background: rgba(16, 185, 129, 0.12);
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 480px;
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 24px;
+            padding: 36px 30px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--card-border);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 16px var(--primary-glow);
+        }
+
+        .header-icon svg {
+            width: 22px;
+            height: 22px;
+            fill: none;
+            stroke: #fff;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .header h1 {
+            font-size: 1.25rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .theme-toggle {
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            color: var(--text-main);
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .theme-toggle:hover {
+            transform: translateY(-2px);
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 16px 50px 16px 18px;
+            background: var(--input-bg);
+            border: 1.5px solid var(--input-border);
+            border-radius: 14px;
+            color: var(--text-main);
+            font-size: 1rem;
+            font-weight: 500;
+            outline: none;
+            letter-spacing: 0.5px;
+        }
+
+        .input-group input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px var(--primary-glow);
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-sub);
+            cursor: pointer;
+            padding: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+        }
+
+        .toggle-password:hover {
+            color: var(--text-main);
+        }
+
+        .toggle-password svg {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        /* Barra de Força */
+        .strength-meter {
+            height: 6px;
+            background: var(--input-bg);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 12px;
+            border: 1px solid var(--input-border);
+        }
+
+        .strength-bar {
+            height: 100%;
+            width: 0%;
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.4s, box-shadow 0.4s;
+            border-radius: 10px;
+        }
+
+        .strength-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .strength-status {
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+            padding: 4px 10px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Card Tempo Estimado */
+        .crack-time-card {
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 14px;
+            padding: 14px 18px;
+            margin-bottom: 24px;
+            font-size: 0.875rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .crack-time-card span:first-child {
+            color: var(--text-sub);
+            font-weight: 500;
+        }
+
+        .crack-time-value {
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* Checklist */
+        .checklist {
+            list-style: none;
+            margin-bottom: 28px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        @media (max-width: 400px) {
+            .checklist {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .checklist li {
+            font-size: 0.825rem;
+            font-weight: 500;
+            color: var(--text-sub);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: color 0.3s;
+        }
+
+        .checklist li.valid {
+            color: var(--text-main);
+        }
+
+        .checklist li .icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            color: var(--text-sub);
+            flex-shrink: 0;
+            transition: all 0.3s;
+        }
+
+        .checklist li.valid .icon {
+            background: var(--success);
+            border-color: var(--success);
+            color: #fff;
+            box-shadow: 0 0 10px var(--success-glow);
+        }
+
+        /* Botões */
+        .generator-section {
+            border-top: 1px solid var(--card-border);
+            padding-top: 24px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 10px 20px var(--primary-glow);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px var(--primary-glow);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn svg {
+            width: 18px;
+            height: 18px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-title">
+                <div class="header-icon">
+                    <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                </div>
+                <h1>Detector de Larp</h1>
+            </div>
+            <button class="theme-toggle" id="themeToggle" title="Alternar tema">🌙</button>
+        </div>
+
+        <!-- Input de Senha -->
+        <div class="input-group">
+            <input type="password" id="passwordInput" placeholder="Digite sua senha..." autocomplete="off">
+            <button class="toggle-password" id="togglePassword" title="Mostrar/Ocultar Senha">
+                <svg id="eyeIcon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            </button>
+        </div>
+
+        <!-- Barra de Progresso -->
+        <div class="strength-meter">
+            <div class="strength-bar" id="strengthBar"></div>
+        </div>
+
+        <div class="strength-label">
+            <span>Força da Senha</span>
+            <span class="strength-status" id="strengthText">Fraca</span>
+        </div>
+
+        <!-- Tempo Estimado -->
+        <div class="crack-time-card">
+            <span>Tempo p/ quebrar:</span>
+            <span class="crack-time-value" id="crackTime">Instantâneo</span>
+        </div>
+
+        <!-- Checklist de Requisitos -->
+        <ul class="checklist">
+            <li id="reqLength"><span class="icon">✕</span> 8+ Caracteres</li>
+            <li id="reqUpper"><span class="icon">✕</span> Maiúscula</li>
+            <li id="reqLower"><span class="icon">✕</span> Minúscula</li>
+            <li id="reqNumber"><span class="icon">✕</span> Número</li>
+            <li id="reqSymbol"><span class="icon">✕</span> Símbolo (!@#$)</li>
+        </ul>
+
+        <!-- Gerador -->
+        <div class="generator-section">
+            <button class="btn" id="generateBtn">
+                <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
+                Gerar Senha Segura
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const passwordInput = document.getElementById('passwordInput');
+        const togglePassword = document.getElementById('togglePassword');
+        const eyeIcon = document.getElementById('eyeIcon');
+        const strengthBar = document.getElementById('strengthBar');
+        const strengthText = document.getElementById('strengthText');
+        const crackTime = document.getElementById('crackTime');
+        const themeToggle = document.getElementById('themeToggle');
+        const generateBtn = document.getElementById('generateBtn');
+
+        const reqs = {
+            length: document.getElementById('reqLength'),
+            upper: document.getElementById('reqUpper'),
+            lower: document.getElementById('reqLower'),
+            number: document.getElementById('reqNumber'),
+            symbol: document.getElementById('reqSymbol')
+        };
+
+        // Alternar Visibilidade da Senha com SVG
+        togglePassword.addEventListener('click', () => {
+            const isPassword = passwordInput.type === 'password';
+            passwordInput.type = isPassword ? 'text' : 'password';
+            
+            if (isPassword) {
+                eyeIcon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>';
+            } else {
+                eyeIcon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
+            }
+        });
+
+        // Alternar Tema
+        themeToggle.addEventListener('click', () => {
+            const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+            if (isLight) {
+                document.documentElement.removeAttribute('data-theme');
+                themeToggle.textContent = '🌙';
+            } else {
+                document.documentElement.setAttribute('data-theme', 'light');
+                themeToggle.textContent = '☀️';
+            }
+        });
+
+        passwordInput.addEventListener('input', analyzePassword);
+
+        function analyzePassword() {
+            const pwd = passwordInput.value;
+
+            const hasLength = pwd.length >= 8;
+            const hasUpper = /[A-Z]/.test(pwd);
+            const hasLower = /[a-z]/.test(pwd);
+            const hasNumber = /[0-9]/.test(pwd);
+            const hasSymbol = /[^A-Za-z0-9]/.test(pwd);
+
+            updateReq(reqs.length, hasLength);
+            updateReq(reqs.upper, hasUpper);
+            updateReq(reqs.lower, hasLower);
+            updateReq(reqs.number, hasNumber);
+            updateReq(reqs.symbol, hasSymbol);
+
+            if (!pwd) {
+                resetMeter();
+                return;
+            }
+
+            let score = 0;
+            if (hasLength) score += pwd.length >= 12 ? 25 : 15;
+            if (hasUpper) score += 15;
+            if (hasLower) score += 15;
+            if (hasNumber) score += 20;
+            if (hasSymbol) score += 25;
+
+            if (pwd.length >= 14 && hasUpper && hasLower && hasNumber && hasSymbol) {
+                score = 100;
+            }
+
+            score = Math.min(score, 100);
+
+            updateUI(score);
+            estimateCrackTime(pwd);
+        }
+
+        function updateReq(element, isValid) {
+            const icon = element.querySelector('.icon');
+            if (isValid) {
+                element.classList.add('valid');
+                icon.textContent = '✓';
+            } else {
+                element.classList.remove('valid');
+                icon.textContent = '✕';
+            }
+        }
+
+        function resetMeter() {
+            strengthBar.style.width = '0%';
+            strengthBar.style.backgroundColor = 'transparent';
+            strengthBar.style.boxShadow = 'none';
+            strengthText.textContent = 'Aguardando...';
+            strengthText.style.color = 'var(--text-sub)';
+            crackTime.textContent = 'Instantâneo';
+        }
+
+        function updateUI(score) {
+            strengthBar.style.width = `${score}%`;
+
+            if (score <= 25) {
+                setStrengthStyle('var(--danger)', 'var(--danger-glow)', 'Muito Fraca');
+            } else if (score <= 50) {
+                setStrengthStyle('var(--warning)', 'var(--warning-glow)', 'Fraca');
+            } else if (score <= 75) {
+                setStrengthStyle('var(--info)', 'var(--info-glow)', 'Média');
+            } else {
+                setStrengthStyle('var(--success)', 'var(--success-glow)', 'Forte & Segura');
+            }
+        }
+
+        function setStrengthStyle(color, glow, text) {
+            strengthBar.style.backgroundColor = color;
+            strengthBar.style.boxShadow = `0 0 12px ${glow}`;
+            strengthText.textContent = text;
+            strengthText.style.color = color;
+        }
+
+        function estimateCrackTime(pwd) {
+            let poolSize = 0;
+            if (/[a-z]/.test(pwd)) poolSize += 26;
+            if (/[A-Z]/.test(pwd)) poolSize += 26;
+            if (/[0-9]/.test(pwd)) poolSize += 10;
+            if (/[^A-Za-z0-9]/.test(pwd)) poolSize += 32;
+
+            if (poolSize === 0) {
+                crackTime.textContent = 'Instantâneo';
+                return;
+            }
+
+            const combinations = Math.pow(poolSize, pwd.length);
+            const seconds = combinations / 10000000000;
+
+            crackTime.textContent = formatTime(seconds);
+        }
+
+        function formatTime(seconds) {
+            if (seconds < 1) return 'Instantâneo';
+            if (seconds < 60) return `${Math.floor(seconds)} segundos`;
+            if (seconds < 3600) return `${Math.floor(seconds / 60)} minutos`;
+            if (seconds < 86400) return `${Math.floor(seconds / 3600)} horas`;
+            if (seconds < 31536000) return `${Math.floor(seconds / 86400)} dias`;
+            if (seconds < 3153600000) return `${Math.floor(seconds / 31536000)} anos`;
+            return 'Séculos / Milênios';
+        }
+
+        generateBtn.addEventListener('click', () => {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:,.<>?';
+            let newPassword = '';
+            const length = 16;
+
+            newPassword += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[Math.floor(Math.random() * 26)];
+            newPassword += 'abcdefghijklmnopqrstuvwxyz'[Math.floor(Math.random() * 26)];
+            newPassword += '0123456789'[Math.floor(Math.random() * 10)];
+            newPassword += '!@#$%^&*()_+-='[Math.floor(Math.random() * 14)];
+
+            for (let i = 4; i < length; i++) {
+                newPassword += chars[Math.floor(Math.random() * chars.length)];
+            }
+
+            newPassword = newPassword.split('').sort(() => 0.5 - Math.random()).join('');
+
+            passwordInput.value = newPassword;
+            analyzePassword();
+        });
+    </script>
+</body>
+</html>
